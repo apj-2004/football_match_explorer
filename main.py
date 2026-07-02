@@ -52,29 +52,14 @@ competition_names = sorted(
 
 #competition selected
 def competition_selected(choice):
-    league_df = competitions_df[
-        competitions_df["competition_name"]
-        == choice
-    ]
-
-    season_names = (
-        league_df["season_name"]
-        .tolist()
-    )
+    season_names = manager.get_seasons(choice)
 
     season_dropdown.configure(
         values = season_names
     )
-    print(season_names)
-    pass
 
-
-
-#season_names = (
-#    league_df["season_name"]
-#    .tolist()
-#)
-
+def season_selected(choice):
+    comp_id, season_id = manager.get_ids(choice)
 
 #competition droplist
 competition_dropdown = ctk.CTkComboBox(
@@ -95,6 +80,9 @@ season_dropdown = ctk.CTkComboBox(
 )
 
 season_dropdown.pack(pady=10)
+season_dropdown.configure(
+    command=season_selected
+)
 
 
 
