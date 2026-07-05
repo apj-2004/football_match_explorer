@@ -59,7 +59,19 @@ def competition_selected(choice):
     )
 
 def season_selected(choice):
-    comp_id, season_id = manager.get_ids(choice)
+    manager.get_season_details(choice)
+
+    manager.load_matches()
+
+    matches_name = manager.get_matches_list()
+
+    match_droplist.configure(
+        values=matches_name
+    )
+
+def match_selected(choice):
+
+    manager.update_match_id(choice)
 
 #competition droplist
 competition_dropdown = ctk.CTkComboBox(
@@ -73,9 +85,10 @@ competition_dropdown.configure(
     command=competition_selected
 )
 
+#season droplist
 season_dropdown = ctk.CTkComboBox(
     main_frame,
-    values=[],
+    values=["Select Season"],
     width=300
 )
 
@@ -84,7 +97,17 @@ season_dropdown.configure(
     command=season_selected
 )
 
+#match droplist
+match_droplist = ctk.CTkComboBox(
+    main_frame,
+    values=['Select Matches'],
+    width=300
+)
 
+match_droplist.configure(
+    command = match_selected
+)
+match_droplist.pack(pady=10)
 
 #
 root.mainloop()
