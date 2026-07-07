@@ -4,7 +4,9 @@
 
 #import
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 from data.statsbomb_manager import StatsBombManager
+from ui.navigation_panel import NavigationPanel
 
 ## App Configuration
 ctk.set_appearance_mode("dark")
@@ -15,7 +17,7 @@ ctk.set_default_color_theme("blue")
 root = ctk.CTk()
 
 root.title("Football Match Explorer")
-root.geometry("800x600")
+root.geometry("1400x800")
 
 #main frame
 main_frame = ctk.CTkFrame(root)
@@ -42,6 +44,8 @@ title_label.pack(pady=20)
 #StatsBombManager
 manager = StatsBombManager()
 
+
+
 #competitions_df
 competitions_df = manager.get_competitions()
 competition_names = sorted(
@@ -50,64 +54,100 @@ competition_names = sorted(
     .tolist()
 )
 
+navigation_panel = NavigationPanel(main_frame, competition_names)
 #competition selected
 def competition_selected(choice):
     season_names = manager.get_seasons(choice)
 
-    season_dropdown.configure(
-        values = season_names
-    )
+    navigation_panel.update_seasons(season_names)
 
 def season_selected(choice):
     manager.get_season_details(choice)
 
-    manager.load_matches()
+    manager.load_matches_df()
 
     matches_name = manager.get_matches_list()
 
-    match_droplist.configure(
-        values=matches_name
-    )
+    navigation_panel.update_matches(matches_name)
 
 def match_selected(choice):
-
     manager.update_match_id(choice)
 
-#competition droplist
-competition_dropdown = ctk.CTkComboBox(
-    main_frame,
-    values=competition_names,
-    width=300
-)
-competition_dropdown.pack(pady=10)
+def load_match_button_action():
+    manager.load_match()
 
-competition_dropdown.configure(
-    command=competition_selected
-)
+    if manager.check_events_lineups_df() is True:
+        CTkMessagebox(
+            title="Match Load Info",
+            message="Match events and lineups loaded ok!",
+            icon="info"
+        )
+    else:
+        CTkMessagebox(
+            title="Match Load Info",
+            message="Match events and lineups not loaded!",
+            icon="error"
+        )
 
-#season droplist
-season_dropdown = ctk.CTkComboBox(
-    main_frame,
-    values=["Select Season"],
-    width=300
-)
+navigation_panel.set_competition_callback(competition_selected)
 
-season_dropdown.pack(pady=10)
-season_dropdown.configure(
-    command=season_selected
-)
+navigation_panel.set_season_callback(season_selected)
 
-#match droplist
-match_droplist = ctk.CTkComboBox(
-    main_frame,
-    values=['Select Matches'],
-    width=300
-)
+navigation_panel.set_match_callback(match_selected)
 
-match_droplist.configure(
-    command = match_selected
-)
-match_droplist.pack(pady=10)
-
+navigation_panel.set_load_match_button_callback(load_match_button_action)
 #
+
+#content frame
+content_frame= ctk.CTkFrame(main_frame)
+content_frame.pack(
+    fill="both",
+    expand=True,
+    padx=10,
+    pady=10
+)
+
+content_frame.grid_columnconfigure(0, weight=3)
+
+content_frame.grid_columnconfigure(1, weight=2)
+
+content_frame.grid_rowconfigure(
+    0,
+    weight=1
+)
+
+#creating subframes within the content frame.
+pitch_container=ctk.CTkFrame(content_frame)
+pitch_container.grid(
+    row=0,
+    column=0,
+    sticky="nsew",
+    padx=5,
+    pady=5
+)
+
+pitch_label = ctk.CTkLabel(
+    pitch_container,
+    text="Pitch Panel"
+)
+
+pitch_label.pack(expand=True)
+
+match_container=ctk.CTkFrame(content_frame)
+match_container.grid(
+    row=0,
+    column=1,
+    sticky="nsew",
+    padx=5, pady=5
+)
+
+match_label = ctk.CTkLabel(
+    match_container,
+    text="match Panel"
+)
+
+match_label.pack(expand=True)
+
+
+
 root.mainloop()

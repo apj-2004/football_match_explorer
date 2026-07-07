@@ -7,9 +7,11 @@ class StatsBombManager:
         self.competitions_df = sb.competitions()
         self.selected_competition_df = None
         self.matches_df = None
+
         self.selected_competition_id = None
         self.selected_season_id = None
         self.selected_match_id = None
+
         self.events_df = None
         self.lineups_df = None
 
@@ -17,14 +19,14 @@ class StatsBombManager:
     def get_competitions(self):
         return self.competitions_df
 
-    def load_matches(self):
+    def load_matches_df(self):
         self.matches_df = sb.matches(competition_id=self.selected_competition_id,
                         season_id = self.selected_season_id
                         )
+        self.matches_df["display_names"] = self.matches_df["home_team"] + " vs " + self.matches_df["away_team"]
         return self.matches_df
 
     def get_matches_list(self):
-        self.matches_df["display_names"] = self.matches_df["home_team"] + " vs " + self.matches_df["away_team"]
         return self.matches_df["display_names"]
 
     def get_seasons(self, competition_name):
@@ -42,9 +44,20 @@ class StatsBombManager:
 
         return self.selected_competition_id, self.selected_season_id
 
-    def get_match_id(self, match):
+    def update_match_id(self, match):
 
         match_row = self.matches_df[self.matches_df["display_names"]==match]
         self.selected_match_id = match_row.iloc[0]["match_id"]
 
-        print(self.selected_match_id)
+    def load_match(self):
+
+        self.events_df = sb.events(match_id=self.selected_match_id)
+        self.lineups_df = sb.lineups(match_id=self.selected_match_id)
+
+
+    def check_events_lineups_df(self):
+        return (
+            self.events_df is not None
+            and
+            self.lineups_df is not None
+        )
