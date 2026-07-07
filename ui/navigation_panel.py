@@ -15,7 +15,12 @@ class NavigationPanel:
             values=self.competition_names,
             width=300
         )
-        self.competition_dropdown.pack(pady=10)
+        self.competition_dropdown.grid(
+            row=0,
+            column=0,
+            pady=10,
+            padx=10
+        )
 
         #season droplist
         self.season_dropdown = ctk.CTkComboBox(
@@ -24,7 +29,12 @@ class NavigationPanel:
             width=300
         )
 
-        self.season_dropdown.pack(pady=10)
+        self.season_dropdown.grid(
+            row=0,
+            column=1,
+            pady=10,
+            padx=10
+        )
 
         #match droplist
         self.match_droplist = ctk.CTkComboBox(
@@ -33,14 +43,24 @@ class NavigationPanel:
             width=300
         )
 
-        self.match_droplist.pack(pady=10)
+        self.match_droplist.grid(
+            row=0,
+            column=2,
+            pady=10,
+            padx=10
+        )
 
         #load match button
         self.load_match_button = ctk.CTkButton(
             self.parent,
             text="Load Match"
         )
-        self.load_match_button.pack(pady=10)
+        self.load_match_button.grid(
+            row=0,
+            column=3,
+            pady=10,
+            padx=10
+        )
 
     def set_competition_callback(self, callback):
         self.competition_dropdown.configure(command= callback)

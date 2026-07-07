@@ -61,3 +61,19 @@ class StatsBombManager:
             and
             self.lineups_df is not None
         )
+
+    def get_match_info(self):
+
+        row = self.matches_df[
+                        self.matches_df["match_id"] == self.selected_match_id
+                    ]
+
+        row = row.iloc[0]
+        match_info = {
+            "home_team": row["home_team"],
+            "away_team": row["away_team"],
+            "home_score": row["home_score"],
+            "away_score": row["away_score"]
+        }
+
+        return match_info

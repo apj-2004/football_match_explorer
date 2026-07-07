@@ -6,6 +6,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from data.statsbomb_manager import StatsBombManager
+from ui.match_panel import MatchPanel
 from ui.navigation_panel import NavigationPanel
 
 ## App Configuration
@@ -29,9 +30,18 @@ main_frame.pack(
     pady=20
 )
 
+#creating the title_frame
+title_frame = ctk.CTkFrame(
+    main_frame
+)
+title_frame.pack(
+    fill="x",
+    padx=15,
+    pady=10
+)
 #title
 title_label = ctk.CTkLabel(
-    main_frame,
+    title_frame,
     text="Football Match Explorer",
     font=("Segoe UI", 24, "bold")
 )
@@ -54,7 +64,16 @@ competition_names = sorted(
     .tolist()
 )
 
-navigation_panel = NavigationPanel(main_frame, competition_names)
+#navigation_frame
+navigation_frame = ctk.CTkFrame(
+    main_frame
+)
+navigation_frame.pack(
+    fill="both",
+    pady=20,
+    padx=10
+    )
+navigation_panel = NavigationPanel(navigation_frame, competition_names)
 #competition selected
 def competition_selected(choice):
     season_names = manager.get_seasons(choice)
@@ -88,6 +107,10 @@ def load_match_button_action():
             message="Match events and lineups not loaded!",
             icon="error"
         )
+
+    match_info = manager.get_match_info()
+
+    match_panel.update_match_info(match_info)
 
 navigation_panel.set_competition_callback(competition_selected)
 
@@ -141,12 +164,7 @@ match_container.grid(
     padx=5, pady=5
 )
 
-match_label = ctk.CTkLabel(
-    match_container,
-    text="match Panel"
-)
-
-match_label.pack(expand=True)
+match_panel = MatchPanel(match_container)
 
 
 
