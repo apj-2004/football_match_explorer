@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from ui.stat_row import StatRow
 
 class MatchPanel:
 
@@ -75,6 +76,37 @@ class MatchPanel:
             sticky="ew",
             padx=5
         )
+
+        self.statistics_frame = ctk.CTkFrame(
+            self.main_frame
+        )
+
+        self.statistics_frame.pack(
+            fill="x",
+            padx=15,
+            pady=15
+        )
+
+        statistics = [
+            "Possession",
+            "Passes",
+            "Shots",
+            "Corners",
+            "Saves",
+        ]
+        self.stat_rows = {}
+
+        for statistic in statistics:
+
+            row = StatRow(self.statistics_frame)
+            self.stat_rows[statistic] = row
+            row.update_values(
+                "--",
+                statistic,
+                "--"
+            )
+
+
 
     def update_match_info(self, match_info):
 
