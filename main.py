@@ -112,6 +112,9 @@ def load_match_button_action():
 
     match_panel.update_match_info(match_info)
 
+    team_statistics = manager.get_team_statistics()
+    match_panel.update_team_statistics(team_statistics)
+
 navigation_panel.set_competition_callback(competition_selected)
 
 navigation_panel.set_season_callback(season_selected)

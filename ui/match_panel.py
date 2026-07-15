@@ -89,8 +89,11 @@ class MatchPanel:
 
         statistics = [
             "Possession",
-            "Passes",
+            "Attempted Passes",
+            "Completed Passes",
+            "Pass Accuracy",
             "Shots",
+            "On Target",
             "Corners",
             "Saves",
         ]
@@ -120,3 +123,14 @@ class MatchPanel:
         )
 
         self.score_label.configure(text=score_text)
+
+    def update_team_statistics(self, statistics):
+
+        for statistic, values in statistics.items():
+
+            row = self.stat_rows[statistic]
+            row.update_values(
+                values[0],
+                statistic,
+                values[1]
+            )
