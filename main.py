@@ -8,6 +8,7 @@ from CTkMessagebox import CTkMessagebox
 from data.statsbomb_manager import StatsBombManager
 from ui.match_panel import MatchPanel
 from ui.navigation_panel import NavigationPanel
+from ui.pitch_panel import PitchPanel
 
 ## App Configuration
 ctk.set_appearance_mode("dark")
@@ -115,6 +116,11 @@ def load_match_button_action():
     team_statistics = manager.get_team_statistics()
     match_panel.update_team_statistics(team_statistics)
 
+    lineup_details = manager.get_starting_lineups()
+    pitch_panel.plot_starting_lineup(lineup_details)
+
+
+
 navigation_panel.set_competition_callback(competition_selected)
 
 navigation_panel.set_season_callback(season_selected)
@@ -152,12 +158,7 @@ pitch_container.grid(
     pady=5
 )
 
-pitch_label = ctk.CTkLabel(
-    pitch_container,
-    text="Pitch Panel"
-)
-
-pitch_label.pack(expand=True)
+pitch_panel = PitchPanel(pitch_container)
 
 match_container=ctk.CTkFrame(content_frame)
 match_container.grid(

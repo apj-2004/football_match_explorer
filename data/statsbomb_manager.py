@@ -1,5 +1,6 @@
 #import
 from statsbombpy import sb
+import pandas as pd
 
 class StatsBombManager:
 
@@ -54,7 +55,6 @@ class StatsBombManager:
         self.events_df = sb.events(match_id=self.selected_match_id)
         self.lineups_df = sb.lineups(match_id=self.selected_match_id)
 
-
     def check_events_lineups_df(self):
         return (
             self.events_df is not None
@@ -81,15 +81,47 @@ class StatsBombManager:
 
         return match_info
 
+    def _get_match_row(self):
+        return self.matches_df[
+            self.matches_df["match_id"] == self.selected_match_id
+        ].iloc[0]
+
+    def get_starting_lineups(self):
+        row = self._get_match_row()
+
+        home_team = row["home_team"]
+        away_team = row["away_team"]
+
+        home_tactics = self.events_df.tactics.loc[((self.events_df.type == "Starting XI") & (self.events_df.team == home_team))].reset_index(drop=True)
+        home_tactics = home_tactics.iloc[0]
+
+        home_lineup = pd.json_normalize(home_tactics["lineup"])
+
+        home_formation = str(home_tactics["formation"])
+
+
+        away_tactics = self.events_df.tactics.loc[((self.events_df.type == "Starting XI") & (self.events_df.team == away_team))].reset_index(drop=True)
+        away_tactics = away_tactics.iloc[0]
+
+        away_lineup = pd.json_normalize(away_tactics["lineup"])
+
+        away_formation = str(away_tactics["formation"])
+
+        return {
+                    "home_team": home_team,
+                    "away_team": away_team,
+                    "home_lineup": home_lineup,
+                    "away_lineup": away_lineup,
+                    "home_formation": home_formation,
+                    "away_formation": away_formation
+                }
+
     def get_team_statistics(self):
 
         statistics = {}
 
-        row = self.matches_df[
-                        self.matches_df["match_id"] == self.selected_match_id
-                    ]
+        row = self._get_match_row()
 
-        row = row.iloc[0]
         home_team = row["home_team"]
         away_team = row["away_team"]
 
@@ -194,19 +226,18 @@ class StatsBombManager:
         )
 
         #computing Possession
-        possession_events = self.events_df.drop_duplicates(subset="possession")
+        possession_events = self.events_df.drop_duplicates(subset=["possession"])
 
         total_events = len(possession_events)
 
         possession_counts = possession_events["possession_team"].value_counts()
 
-        possession_home = int(possession_counts.get(home_team, 0))/ int(total_events)
+        possession_home = possession_counts.get(home_team, 0)/ int(total_events)
         possession_home *= 100
 
-        possession_away = int(possession_counts.get(away_team, 0))/ int(total_events)
+        possession_away = possession_counts.get(away_team, 0)/ int(total_events)
         possession_away *= 100
 
-        print(total_events, possession_counts)
 
         statistics["Possession"] = (
             f"{possession_home:.2f} %",
