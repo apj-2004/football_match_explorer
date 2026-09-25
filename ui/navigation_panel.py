@@ -13,7 +13,7 @@ class NavigationPanel:
         self.competition_dropdown = ctk.CTkComboBox(
             self.parent,
             values=self.competition_names,
-            width=300
+            width=100
         )
         self.competition_dropdown.grid(
             row=0,
@@ -26,12 +26,12 @@ class NavigationPanel:
         self.season_dropdown = ctk.CTkComboBox(
             self.parent,
             values=["Select Season"],
-            width=300
+            width=100
         )
 
         self.season_dropdown.grid(
-            row=0,
-            column=1,
+            row=1,
+            column=0,
             pady=10,
             padx=10
         )
@@ -44,8 +44,8 @@ class NavigationPanel:
         )
 
         self.match_droplist.grid(
-            row=0,
-            column=2,
+            row=2,
+            column=0,
             pady=10,
             padx=10
         )
@@ -56,8 +56,8 @@ class NavigationPanel:
             text="Load Match"
         )
         self.load_match_button.grid(
-            row=0,
-            column=3,
+            row=3,
+            column=0,
             pady=10,
             padx=10
         )

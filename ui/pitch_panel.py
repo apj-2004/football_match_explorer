@@ -3,6 +3,7 @@ import customtkinter as ctk
 from mplsoccer import Pitch
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 
 class PitchPanel:
 
@@ -55,15 +56,13 @@ class PitchPanel:
 
     def plot_starting_lineup(self, lineup_data):
 
-
-        self.ax.clear()
-        self.pitch.draw(ax=self.ax)
+        self.update_pitch()
 
         #home_team
 
         self.ax.text(
                     25, 78,
-                    lineup_data.get("home_team"),
+                    lineup_data.get("home_team")+"-"+lineup_data.get("home_formation"),
                     ha= "center", va="center",
                     fontsize=14
         )
@@ -116,7 +115,30 @@ class PitchPanel:
 
         self.ax.text(
         75, 78,
-        lineup_data.get("away_team"),
+        lineup_data.get("away_team")+"-"+lineup_data.get("away_formation"),
         ha="center",va="center",
         fontsize=14
         )
+
+        self.canvas.draw()
+
+    def plot_player_heat_map(self, player_location_data):
+
+        self.update_pitch()
+
+        player_location_data = np.array(player_location_data.tolist())
+
+        player_x = player_location_data[:,0]
+        player_y = player_location_data[:,1]
+
+        self.pitch.kdeplot(
+            player_x,
+            player_y,
+            ax = self.ax,
+            fill =True,
+            levels=100,
+            cmap="coolwarm",
+            alpha=0.3
+        )
+
+        self.canvas.draw()

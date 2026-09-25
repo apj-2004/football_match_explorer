@@ -245,3 +245,26 @@ class StatsBombManager:
         )
 
         return statistics
+
+    def get_player_heatmap_data(self, player_id):
+
+        player_df = self.events_df[
+            self.events_df["player_id"] == player_id
+        ]
+
+        heatmap_events = player_df[
+            player_df["type"].isin([
+                "Pass",
+                "Carry",
+                "Ball Reciept",
+                "Shot",
+                "Dribble"
+            ])
+        ]
+
+        heatmap_events = heatmap_events.dropna(subset=["location"])
+
+        heatmap_location = heatmap_events["location"]
+
+        print("successful generation of the heatmap data")
+        return heatmap_location
